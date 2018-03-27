@@ -9,7 +9,8 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 
-#Data can be downloaded from: 
+#Data can be downloaded from: https://archive.ics.uci.edu/ml/datasets/optical+recognition+of+handwritten+digits
+
 #extracting files from zip folder
 foldername <- "digits.zip"
 unzip(foldername, files = NULL, list = FALSE, overwrite = TRUE, junkpaths = FALSE, exdir =
@@ -17,7 +18,7 @@ unzip(foldername, files = NULL, list = FALSE, overwrite = TRUE, junkpaths = FALS
 
 
 ######################################################################
-#Fuction to read data in
+# Fuction to read data in
 ######################################################################
 
 read_digits <- function(filename) {
@@ -41,7 +42,7 @@ test_set <- read_digits("test.txt")
 
 view_digit = function(data, obs) {
   
-  a = data[,-1]     #removes 1's column (with a 'digit')
+  a = data[,-1]     #removes 1's column (with digit lables)
   #arranging by column is faster in r
    m = matrix(unlist(a[obs,]), 16,16)  
    
@@ -79,8 +80,8 @@ predict_knn = function(points, train, labels, k, method) {
   #distance matrix computed within the function
   #but only once and only between the selected test set points and
   #the observations of the training set.
-  #a single point or any combination of points from 
-  #any data set that user selects
+  #User can choose a single point or any combination of points from 
+  #any data set, to which they would like to apply the classifier.
   distance_matrix = dist(mt_combined,
                          method = method,
                          diag = T, upper = T)
@@ -109,28 +110,31 @@ predict_knn = function(points, train, labels, k, method) {
 }
 
 #predicts five nearest neighbors for the first five values of the test set.
+#the first column contains the lable for each observation and not a pixel
+#value; therefore, it is not used for distance computation. Hence, it's removed.
 predict_knn(test_set[1:5,-1], training_set[,-1], training_set[,1], 5, "euclidean")
 
 
 #########################################################################
 # Function to estimate cross-validation errors
 #########################################################################
-#Here we use slightly different approach than in the question above. 
-#unlike in predict_knn(), we do not compute distance matrices within
-#the function, since it's two timeconsuming to do it ten times. 
-#Instead we use a helper function: compute_distances(), which takes as arguments
-#a data set for which we running the cv, in our case a train, and the desired method
+#Here I used slightly different approach than in the section above. 
+#unlike in predict_knn(), I did not compute distance matrices within
+#the function, since it's two time- and resource-consuming to do it ten times. 
+#Instead I wrote a 'helper' function: compute_distances(), which takes as arguments
+#a data set for which we running the cross-validation, in this case training, and the desired method
 #The cv_error_knn() in turn accepts the resulting distance matrix
-#as an argument and performs all the stepps of the cross validation.
-# * we were okayed by the TA's on using a for-loop to run this function
-# for each value of k= 1:15, w/o significant loss of efficiency (since, there
-# is no repeated distance matrix computations involved. However, if the array of k's was 
-#larager than that, we would have used an sapply on the vector of k's
+#as an argument and performs all the stepps of cross-validation.
 
 set.seed(123) 
 
 #splitting and shuffling the indeces of the training set for 10-fold cross validation
-#https://stackoverflow.com/questions/3318333/split-a-vector-into-chunks-in-r
+#Here I took an index of each observation from the training set and 
+#randomly assigned it into one of the ten equally sized groups (w/o replacement to avoid douplication.)
+#Hence, for 10-fold cross-validation in each step I use observations from
+#one of the groups as my training segment and the other nine for testing, repeating
+#the process 10 times. 
+
 split_indexes <- split(indexes, ceiling(seq_along(indexes)/(n/10)))
 
 #function to compute distance matrix
@@ -148,7 +152,8 @@ compute_distances = function(train, method) {
   
 }
 
-#computing the 3 distance matrices
+#computing three different distance matrices, one for each of the following distance
+#metrics: Eucledean, Minkowski, and Manhattan
 distance_matrix_euc = compute_distances(training_set[,-1], "euclidean")
 distance_matrix_mink = compute_distances(training_set[,-1], "minkowski")
 distance_matrix_manh = compute_distances(training_set[,-1], "manhattan")
@@ -156,9 +161,9 @@ distance_matrix_manh = compute_distances(training_set[,-1], "manhattan")
 #function to compute error rates for 10-fold cross validation
 cv_error_knn = function(distance_matrix, labels, k) {
 
-  #setting the distance from a point to itself to infinity for 
-  # all the points. This takes care of 
-  # the overlaping observations. (per Ben's OH.) 
+  #setting the distance from a data point to itself to infinity for 
+  # all the points, since it is always the shortest, but not useful in prediction
+  #at all.   
   for (ind in split_indexes) {
     distance_matrix[ind,ind] <- Inf
   }
@@ -178,7 +183,7 @@ cv_error_knn = function(distance_matrix, labels, k) {
   # browser()
    names(predictions) <- NULL  
    mean(predictions != labels) 
-   #using mean function in the statement above is equivalent to summing the incorrct predictoins
+   #using mean function in the statement above is equivalent to summing the incorrect predictoins
    #and dividing by the total number of predictions.
 
 }
@@ -215,10 +220,10 @@ for (i in seq_along(k)) {
 
 errors_rate <- data.frame(k,error_rates_euc, error_rates_manh)
 
-#Note that if we were to perform any analysis on this dataframe
-#we would tidy it appropriately to make sure that each column 
+#Note that if I was to perform any analysis on this dataframe
+#I would have to tidy it appropriately to make sure that each column 
 #is a variabl (here the variables would be: k, method, and error rate 
-#(see the commented out code at the end of the question)
+#See the commented out code section to see how I've done it.
 
 p <- ggplot(errors_rate, aes(k, error_rates_euc, error_rates_manh), axis = T) 
 
@@ -239,15 +244,15 @@ p + geom_line( aes(k, error_rates_euc, col = "euclidean")) +
 
 
 #########################################################################
-# 7 creating confusion matrices for the 3 'best' combinations of k/method 
+# creating confusion matrices for the three 'best' combinations of k/method 
 #########################################################################
 
 #modifying cv_error_knn function to output predictions to input into 
 #confusion matrix
 cv_predict_knn = function(distance_matrix, labels, k) {
   
-  #setting the distance from a point to itself to infinity for 
-  # all the points, per Ben's OH. 
+  #setting the distance from a point to itself to infinity (see lines 161-163.) 
+
   for (ind in split_indexes) {
     distance_matrix[ind,ind] <- Inf
   }
@@ -256,7 +261,7 @@ cv_predict_knn = function(distance_matrix, labels, k) {
     
     v = head(order(col), k)
     t = table(training_set[v,1])
-    # print(t)
+     
     result <- names(t)[which(t == max(t))]
     
     if(length(result) > 1)
@@ -269,12 +274,12 @@ cv_predict_knn = function(distance_matrix, labels, k) {
   
 }
 
-# from question 3, it looks like the best combinations are in k = 3-5 for 
-# both methods explored (euclidean and manhattan). we exclued k= 1 case since it's most likely 
-# to show a biased result by comparing a value to itself
-# the 3 best combinations are [k=3, euclidean], [k = 3, manhattan*] , [k = 4, euclidean]
-# * (the euclidean results are better for # k = 3 : 10, but we uncluded this instead to 
-#compare the two methods)
+# It looks like the best combinations are in k = 3-5 for 
+# both methods explored (euclidean and manhattan). I purposely exclued k= 1 case since it's most likely 
+# to show a biased result by comparing a value to itself.
+# The three best combinations are [k = 3, euclidean], [k = 3, manhattan*] , [k = 4, euclidean]
+# * (the euclidean results are better for # k = 3 : 10, but I've uncluded this one instead to 
+# better compare the two methods)
 
 #cv predictions and confusion matrix for [k=3, euclidean]
 confusion_euclid_k3 = cv_predict_knn(distance_matrix_euc, training_set[,1], 3)
@@ -292,13 +297,13 @@ confusion_matrix_3 <- table(training_set[,1], confusion_euclid_k4)
 confusion_matrix_3
 
 ##################################################################
-# 9 Computing error rates for test set for K = 1,..., 15
+# Computing error rates for test set for K = 1,..., 15
 ##################################################################
-#the approach we use here is implementing a hybrid function between
-# predict_knn() and cv_error_knn(). Like in the latter, we compute
+#The approach I use here is implementing a hybrid function between
+# predict_knn() and cv_error_knn(). Like in the latter, I computed
 # the distance matrix beforehand and pass it as an argument into our
-#function error_rate_knn(). And like a former, it takes our training and 
-#test data, including labels for indexing and dimention control, but does
+#function error_rate_knn(). And like a former, it takes both the training and 
+#test data, including the labels for indexing and dimention control, but does
 # not perform a cross validation.
 
 
