@@ -12,7 +12,8 @@
 
 #### Here is an expample of how a single digit looks like, zero in this case:
 ![alt text](https://github.com/asilin17/Handwritten-Digit-Recognition-/blob/master/Images/Zero.Rplot.png)
-#### 
+#### Note that pixels around the corner and the sides of the image have the same coloration of solid white. That is also the case for other digits. Hence, this pixels don't change their value from image to image, which renders them useless in prediction. However, the pixels in 
+
 ### Results: 
 #### Below is the confusion matrix for K = 3 and distance computation method (i.e. distance metric)
 #### The values on the top indicate the observations for which the predictions were made. The values on the left-hand side show which digits our obsrvation(s) in questing have been classified as. If we look at the first column, which says '6', we can see that in 4 instances, it has been classified as 0, once as 2, 6 times as 4, etc. The amoun of correct predictions, wher '6' has been actually identified as such, is 649. In the same way, we can see the results for other digits. Some digits get confused with certain others more often than with the rest. If we look at 9' in 8th column, we can see that ninteen times it has been misclassified as '4'. That's because 4 and 9 can look very similar the way some people write them. You can find to be the case in most instancses with other digits, as well. 
