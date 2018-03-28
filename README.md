@@ -11,12 +11,12 @@
 #### Each observation in the dataset represents a handwritten image of a singe digit from 0 to 9 and contains 256 features, which correspond to an individual pixel on a 16x16 plane. Each pixel value ranges from -1 to 1 to indicate the coloration on the grayscale. 
 
 #### Here is an expample of how a single digit looks like, zero in this case:  Handwritten-Digit-Recognition-/Images/0.Rplot.pdf 
-#### In order to display it in a more familiar black-on-white, we can multiply all the pixel values by -1, and get the opposite color values for each pixel, like this:  Handwritten-Digit-Recognition-/Images/Zero.Rplot.png 
-
+#### In order to display it in a more familiar black-on-white, we can multiply all the pixel values by -1, and get the opposite color values for each pixel, like this:  https://github.com/asilin17/Handwritten-Digit-Recognition-/blob/master/Images/Zero.Rplot.png
+#### 
 ### Results: 
 #### Below is the confusion matrix for K = 3 and distance computation method (i.e. distance metric)
 #### The values on the top indicate the observations for which the predictions were made. The values on the left-hand side show which digits our obsrvation(s) in questing have been classified as. If we look at the first column, which says '6', we can see that in 4 instances, it has been classified as 0, once as 2, 6 times as 4, etc. The amoun of correct predictions, wher '6' has been actually identified as such, is 649. In the same way, we can see the results for other digits. Some digits get confused with certain others more often than with the rest. If we look at 9' in 8th column, we can see that ninteen times it has been misclassified as '4'. That's because 4 and 9 can look very similar the way some people write them. You can find to be the case in most instancses with other digits, as well. 
-####  Handwritten-Digit-Recognition-/Results/Confusion Matrix_k3_euclid.png 
+####  https://github.com/asilin17/Handwritten-Digit-Recognition-/blob/master/Results/Confusion%20Matrix_k3_euclid.png
 
 #### 
 
