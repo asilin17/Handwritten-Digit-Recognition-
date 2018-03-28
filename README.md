@@ -12,7 +12,7 @@
 
 #### Here is an expample of how a single digit looks like, zero in this case:
 ![alt text](https://github.com/asilin17/Handwritten-Digit-Recognition-/blob/master/Images/Zero.Rplot.png)
-#### Note that pixels around the corner and the sides of the image have the same coloration of solid white. That is also the case for other digits. Hence, this pixels don't change their value from image to image, which renders them useless in prediction. However, the pixels in 
+#### Note that pixels around the corner and the sides of the image have the same coloration of solid white. That is also the case for other digits. Hence, this pixels don't change their value from image to image, which renders them useless in prediction. However, the pixels in the middle portion of the image change from digit to digit. Which means, the prediction accuracy can be improved by computing the variance of each of the 256 pixels and removing the ones that don't chage, keeping only the pixels with higher variance.
 
 ### Results: 
 #### Below is the confusion matrix for K = 3 and distance computation method (i.e. distance metric)
@@ -23,7 +23,7 @@
 #### They contain similar information. However, to determine which combination performs best, I used 10-fold Cross-Validation technique.
 #### The graph below show the performance of the two best combinations of k and distance metric.
 ![alt text](https://github.com/asilin17/Handwritten-Digit-Recognition-/blob/master/Results/10-CV-Plot.png)
-#### We can see, when using Eucledean method and K = 3 we get the Error rate of slightly higher than 3%. Note also, that as K increases, the Error rates continue going up. That means that additional 'neighbors' decrease the accuracy of prediction. In addtion, the other distance metric displayed - Manhattan in this case - performs slightly worse than the Eucledean. 
+#### We can see, when using Eucledean method and K = 3 we get the Error rate of slightly higher than 3%. Note also, that as K increases, the Error rates continue going up. That means that additional 'neighbors' decrease the accuracy of prediction. In addtion, the other distance metric displayed - Manhattan in this case - performs slightly worse than the Eucledean, with the Error rate of 4%. 
 
 
 
