@@ -11,8 +11,6 @@
 #### Each observation in the dataset represents a handwritten image of a singe digit from 0 to 9 and contains 256 features, which correspond to an individual pixel on a 16x16 plane. Each pixel value ranges from -1 to 1 to indicate the coloration on the grayscale. 
 
 #### Here is an expample of how a single digit looks like, zero in this case:
-![alt text](https://github.com/asilin17/Handwritten-Digit-Recognition-/blob/master/Images/0.Rplot.pdf) 
-#### In order to display it in a more familiar black-on-white, we can multiply all the pixel values by -1, and get the opposite color values for each pixel, like this:
 ![alt text](https://github.com/asilin17/Handwritten-Digit-Recognition-/blob/master/Images/Zero.Rplot.png)
 #### 
 ### Results: 
